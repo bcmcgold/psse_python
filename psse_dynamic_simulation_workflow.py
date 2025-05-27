@@ -11,9 +11,14 @@ SAV_FILE = r"smib-basecase.sav"
 CONV_FILE = r"smib-transient-stability-converted.sav"
 DYR_FILE = r"smib-dynamic-model.dyr"
 OUT_FILE = r"smib-dynamic-result.out"
+XLSX_FILE = r"out.xlsx"
 
-# Open save case file
+# Remove old files if they exist. If not removed, PSS/E will not overwrite them.
 os.chdir(SAV_LOCATION)
+for f in [CONV_FILE, DYR_FILE, OUT_FILE, XLSX_FILE]:
+    if os.path.exists(f):
+        os.remove(f)
+# Open save case file
 psse_utils.open_sav(SAV_FILE)
 
 # Run load flow analysis
@@ -25,9 +30,9 @@ if not converged:
 # Prepare for dynamic simulation
 # Convert case for switching studies, model generators as classical, and set output channels
 psse_utils.convert_for_switching_studies(CONV_FILE)
-psse_utils.model_generators_classical(DYR_FILE, [3, 3], [1, 1])
+psse_utils.model_generators_classical(DYR_FILE, [5, 0], [3, 0])
 psse_utils.set_output_channels()
 
 # Run dynamic simulation and export results to an Excel file
 psse_utils.run_dynamic_simulation(OUT_FILE)
-psse_utils.export_results_to_excel(OUT_FILE)
+psse_utils.export_results_to_excel(OUT_FILE, XLSX_FILE)
